@@ -6,7 +6,7 @@ try:
     from bs4 import BeautifulSoup as par
     import progressbar
 except:
-    os.system('pip2 install progressbar2')
+    os.system('pip2 install progressbar')
     os.system('pip2 install requests')
     os.system('pip2 install bs4')
 
