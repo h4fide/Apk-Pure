@@ -28,11 +28,12 @@ def progress():
             progressbar.ETA(),
             ') ',
         ])
+        
 
 def unduh(url, out):
-	print '\n\x1b[1;91m! \x1b[1;97mSedang Mengunduh\x1b[1;92m....'
+	print '\n\x1b[1;91m! \x1b[1;97mDownloading\x1b[1;92m....'
 	r = requests.get(url, headers=headers, stream=True)
-	with open(out+'.apk', 'wb') as f:
+	with open(out + ' ', 'wb') as f:
 		total_length = int(r.headers.get('content-length'))
 		bar = progress()
 		bar.start(total_length)
@@ -44,17 +45,21 @@ def unduh(url, out):
 				f.write(chunk)
 				f.flush()
 		bar.finish()
-	print '\x1b[1;91m! \x1b[1;97mSelesai\x1b[1;92m....'; print '\x1b[1;91m! \x1b[1;97mApk Disave \x1b[1;91m:\x1b[1;92m '+out+'.apk\n'
+
+         
+	print '\x1b[1;91m! \x1b[1;97mDone\x1b[1;92m....'; print '\x1b[1;91m! \x1b[1;97mSaved \x1b[1;91m:\x1b[1;92m '+out #+'.apk\n'
+        os.system('python2 apk.py')
+   
 
 def main():
-    os.system('clear')
+    #os.system('clear')
     print logo
-    nama = raw_input('\x1b[1;91m# \x1b[1;97mMasukan Nama Apk \x1b[1;91m:\x1b[1;92m ')
-    link, no, garis = ([], 0, 45*'\x1b[1;92m-')
+    nama = raw_input('\x1b[1;91m# \x1b[1;97mEnter Apk Name \x1b[1;91m:\x1b[1;92m ')
+    link, no, garis = ([], 0, 50*'\x1b[1;92m-')
     try:
         req = requests.get('https://m.apkpure.com/id/search?q=' + nama.replace(' ', '+'), headers=headers).content
     except requests.exceptions.ConnectionError:
-        exit('\x1b[1;91m! \x1b[1;97mHidupkan Koneksi Anda\n')
+        exit('\x1b[1;91m! \x1b[1;97mTurn on Your Connection\n')
 
     req = par(req, 'html.parser')
     print garis
@@ -66,38 +71,48 @@ def main():
         no += 1
         jud = div.find('p', attrs={'class': 'p1'}).text
         dev = div.find('p', attrs={'class': 'p2'}).text
-        jud = jud[:20]
-        print '\x1b[1;97m' + str(no) + '   \x1b[32mAPLIKASI  \x1b[1;91m:\x1b[1;97m ' + jud + '...'
-        print '    \x1b[32mDEVELOPER \x1b[1;91m:\x1b[1;97m ' + dev
+        jud = jud[:31]
+        print '\x1b[1;97m' + str(no) + '   \x1b[32mAPPLICATION  \x1b[1;91m:\x1b[1;97m ' + jud
+        print '    \x1b[0;36mDEVELOPER \x1b[1;91m:\x1b[1;97m ' '\x1b[1;36m'+ dev 
         print garis
 
     try:
-        pil = raw_input('\n\x1b[1;91m# \x1b[1;97mPilih Apk \x1b[1;91m:\x1b[1;92m ')
+        pil = raw_input('\n\x1b[1;91m# \x1b[1;97mChoose Apk \x1b[1;91m:\x1b[1;92m ')
         if pil in ('', ' '):
-            exit('\x1b[1;91m! \x1b[1;97mIsi Pilihan Anda\n')
+            print('\x1b[1;91m! \x1b[1;97mInvalid Choice\n')
+            main()
+            
+            
     except IndexError:
-        exit('\x1b[1;91m! \x1b[1;97mIsi Pilihan Anda\n')
+        exit('\x1b[1;91m! \x1b[1;97mInvalid Choice\n')
 
     pil = int(pil) - 1
-    out = raw_input('\x1b[1;91m# \x1b[1;97mOutput    \x1b[1;91m:\x1b[1;92m ')
+  
     url = 'https://m.apkpure.com' + str(link[pil]) + '/download?from=details'
     run = requests.get(url, headers=headers)
     oks = par(run.content, 'html.parser')
     _find_1 = oks.find('div', attrs={'class': 'fast-download-box'})
     _find_2 = _find_1.find('a', attrs={'class': 'ga'})
     _find_3 = _find_1.find('span', attrs={'class': 'fsize'})
+    _find_4 = _find_1.find('span', attrs={'class': 'file'})
     size = _find_3.text
-    print '\n\x1b[1;91m! \x1b[1;97mSize Aplikasi \x1b[1;91m:\x1b[1;92m ' + size.replace('(', '').replace(')', '')
-    owh = raw_input('\x1b[1;91m! \x1b[1;97mYakin Untuk Mengunduh? [\x1b[1;92mY\x1b[1;97m/\x1b[1;91mT\x1b[1;97m]\n\x1b[1;97m        Jawab \x1b[1;91m:\x1b[1;92m ')
+    import re
+    out = re.sub("[\(\[].*?[\)\]]", "", _find_4.text)[:-1]
+    
+    print(out)
+    
+    print '\n\x1b[1;91m! \x1b[1;97mSize \x1b[1;91m:\x1b[1;92m ' + size.replace('(', '').replace(')', '')
+    owh = raw_input('\x1b[1;91m! \x1b[1;97mAre you sure to download it? [\x1b[1;92mY\x1b[1;97m/\x1b[1;91mN\x1b[1;97m\x1b[1;97m/\x1b[1;92mEnter\x1b[1;97m]  \n\x1b[1;91m! \x1b[1;97mAnswer \x1b[1;91m:\x1b[1;92m ')
     if owh in ('', ' '):
-        exit('\n\x1b[1;91m! \x1b[1;97mIsi Jawaban Anda\n')
+        file = _find_2.get('href')
+        unduh(file, out)
     elif owh in ('Y', 'y'):
         file = _find_2.get('href')
         unduh(file, out)
-    elif owh in ('T', 't'):
-        exit('\n\x1b[1;91m* \x1b[1;97mProgram Terhenti\x1b[1;91m...\n')
+    elif owh in ('N', 'n'):
+        exit('\n\x1b[1;91m* \x1b[1;97mCanceled\x1b[1;91m...\n')
     else:
-        exit('\n\x1b[1;91m! \x1b[1;97mIsi Jawaban Anda\n')
+        exit('\n\x1b[1;91m! \x1b[1;97mIsi Your Answer\n')
 
 # <!-- Hayyuk Gan Download Simontok Aja --!>
 if __name__ == '__main__':
